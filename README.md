@@ -1,5 +1,5 @@
 # Write-up
 
 ```
-This repo is write-up via CTF & wargame :)
+This repo was created for write-up
 ```
