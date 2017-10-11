@@ -1,4 +1,0 @@
-break main
-break *0x8048635
-break *0x8048645
-
