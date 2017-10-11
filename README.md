@@ -1,5 +1,5 @@
 # Write-up
 
 ```
-This repo was created for write-up
+This repo created for write-up
 ```
