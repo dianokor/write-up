@@ -76,7 +76,7 @@ Segmentation fault
 
 <br>
 
-
+<br>
 
 # Analysis & Exploit
 
@@ -89,7 +89,7 @@ Segmentation fault
 [darkelf@localhost darkelf]$ cd tmp
 ```
 
-
+<br>
 
 > 문제의 소스코드에 `argv[2]`주소 값을 확인하는 코드를 아래와 같이 추가해준다.
 
@@ -99,7 +99,7 @@ printf("argv[2]: %#x\n",argv[2]); // argv[2] address
 [darkelf@localhost tmp]$ gcc orge.c -o orge
 ```
 
-
+<br>
 
 > 파이썬으로 파일명에 해당하는 `argv[0]` 길이를 77개로 작성해 이전 문제와 동일한 exploit 코드를 작성한다.
 
@@ -110,7 +110,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA����
 Segmentation fault (core dumped)
 ```
 
-
+<br>
 
 > 확인된 `argv[2]`에 해당하는 주소 값으로 `ret` 값을 변경하여 exploit 코드를 실행하여 `shell`을 획득할 수 있다.
 
