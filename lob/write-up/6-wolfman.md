@@ -2,7 +2,7 @@
 
 **이전 문제와 동일한 내용은 생략하고 추가된 내용만 다루었다.**
 
-- 문제의 소스코드
+>  문제의 소스코드
 
 ```c
 [wolfman@localhost wolfman]$ cat darkelf.c
@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 }
 ```
 
-이 문제의 핵심은 다음과 같다.
+>  이 문제의 핵심은 다음과 같다.
 
 - 버퍼를 `\x00`으로 초기화
 - 환경 변수를 `\x00`으로 초기화
@@ -282,10 +282,9 @@ Segmentation fault (core dumped)
 
 # Exploit
 
-다음은 위 내용을 토대로 exploit 코드를 작성해보자.
+> 다음은 위 내용을 토대로 exploit 코드를 작성해보자.
 
-- ## argv[1]: buf[A\*40] + sfp[A\*4] + ret[argv[2]]
-
+- argv[1]: buf[A\*40] + sfp[A\*4] + ret[argv[2]]
 - argv[2]: nop[1000] + shellcode[24]
 
 ```
