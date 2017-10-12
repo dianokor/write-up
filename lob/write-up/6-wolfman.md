@@ -56,7 +56,9 @@ main(int argc, char *argv[])
 - 환경 변수를 `\x00`으로 초기화
 - 인자 argv[1]의 길이 값 체크
 
-<br>
+
+
+# Analysis
 
 `argv[1]`의 길이 값 체크 부분이 추가되었기 때문에 해당 인자에 쉘코드를 삽입해 실행할 수 없다.
 그렇다면 `argv[2]`를 이용해 쉘코드를 삽입할 경우 길이 값 체크 부분은 우회될 수 있을것 같다.
@@ -208,7 +210,7 @@ Program received signal SIGSEGV, Segmentation fault.
 
 <br>
 
-먼저 gdb 상에서 다음과 같이 `argv[2]` 인자 값에 `x90(NOP)`을 일정 개수만큼 추가해 실행한 뒤
+먼저 gdb 상에서 다음과 같이 `argv[2]` 인자 값에 `x90(NOP)`을 일정 개수 만큼 추가해 실행한 뒤
 
 `ebp`를 확인해보면 `ebp+c`위치에 `**argv[]` 주소 값이 존재함을 확인할 수 있다.
 
@@ -272,9 +274,11 @@ Segmentation fault (core dumped)
 [wolfman@localhost tmp]$
  ```
 
-<br>
-
 `argv[2]` 시작 주소인 `0xbffffc49`를 찾을 수 있었다.
+
+
+
+# Exploit
 
 다음은 위 내용을 토대로 exploit 코드를 작성해보자.
 
