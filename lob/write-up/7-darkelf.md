@@ -96,6 +96,7 @@ Segmentation fault
 ```Python
 [darkelf@localhost tmp]$ vi orge.c
 printf("argv[2]: %#x\n",argv[2]); // argv[2] 주소 찾는 코드를 추가
+
 [darkelf@localhost tmp]$ gcc orge.c -o orge
 ```
 

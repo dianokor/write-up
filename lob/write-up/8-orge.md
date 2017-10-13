@@ -326,13 +326,14 @@ Segmentation fault
 ```python
 [orge@localhost orge]$ cd tmp
 [orge@localhost tmp]$ vi troll.c
-printf("argv[0] addr: %#x\n",argv[0]); // argv[0] 주소 찾는 코드를 추가
+printf("argv[0] addr: %#x\n",argv[0]); // argv[0] 주소 출력 코드를 추가
+
 [orge@localhost tmp]$ gcc troll.c -o troll
 ```
 
 <br>
 
-심볼릭 링크 파일을 동일하게 생성하고 argv[0] 주소를 확인한다.
+심볼릭 링크 파일을 동일하게 생성하고 `argv[0] `주소를 확인한다.
 
 > argv[0] addr: 0xbffff965
 
