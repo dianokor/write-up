@@ -78,7 +78,7 @@ Segmentation fault
 
 <br>
 
-# Analysis & Exploit
+# Analysis
 
 #### 아래는 이전 문제와 모두 동일한 내용이기 때문에 요약하여 내용을 정리하였다.
 
@@ -112,6 +112,8 @@ Segmentation fault (core dumped)
 ```
 
 <br>
+
+# Exploit
 
 > 확인된 `argv[2]`에 해당하는 주소 값으로 `ret` 값을 변경하여 exploit 코드를 실행하여 `shell`을 획득할 수 있다.
 
