@@ -100,6 +100,8 @@ golem: setuid setgid ELF 32-bit LSB executable, Intel 80386, version 1, dynamica
 [skeleton@localhost skeleton]$
 ```
 
+<br>
+
 
 
 # Exploit
