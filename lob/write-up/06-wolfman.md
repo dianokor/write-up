@@ -298,6 +298,6 @@ kernel crashed
 bash$
 ```
 
-###Clear! password is….
+### Clear! password is….
 
 kernel crashed
