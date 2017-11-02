@@ -8,7 +8,7 @@
 
 ### Analysis
 
-바로 nc로 붙어보니 `hint, quit` 문구를 쳐보라는 응답을 줬다.
+바로 nc로 붙어보니 `hint, quit` 문구가 보인다.
 
 ```
 $ nc challenges.whitehatcontest.kr 5959
