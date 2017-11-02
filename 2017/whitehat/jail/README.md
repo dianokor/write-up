@@ -60,7 +60,7 @@ eval() 함수 + 인코딩으로 필터링 우회가 가능할 것 같다.
 
 [node.js][node.js] API 문서를 참고해보니 readFileSync() 함수를 사용하여 js 파일 시스템에 접근이 가능했다.
 
-파일 시스템 접근을 위해 'fs' 모듈을 임포트 해줘야 하므로 with 함수와 require를 함께 사용한다.
+파일 시스템 접근을 위해 'fs' 모듈을 임포트 해줘야 하므로 with 함수와 require를 함께 사용했다.
 
 > query:  with(require('fs')){readFileSync('/etc/passwd')}
 >
