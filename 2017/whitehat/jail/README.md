@@ -97,7 +97,7 @@ your input flag is {easy~esay!easy?_Jav4-scr1pt~yay}
 
 flag is
 
-**easy~esay!easy?_Jav4-scr1pt~yay**
+***easy~esay!easy?_Jav4-scr1pt~yay***
 
 
 
