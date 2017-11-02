@@ -4,7 +4,7 @@
 
 > nc challenges.whitehatcontest.kr 5959
 
-
+<br>
 
 ### Analysis
 
@@ -17,7 +17,7 @@ type: hint, quit
 > 
 ```
 
-
+<br>
 
 hint를 입력해보니 다음과 같이 RegExp 정규 표현식 안에 문자열이 쭈르륵 나열되었다. 음?
 
@@ -26,7 +26,7 @@ hint를 입력해보니 다음과 같이 RegExp 정규 표현식 안에 문자�
 (input) => (new RegExp(/with|\.|;|new| |'|child|crypto|os|http|dns|net|tr|tty|zlib|punycode|util|url|ad|nc|>|`|\+|ex|=/i).test(input))
 ```
 
-
+<br>
 
 아무 문자열이나 입력해보았다.
 
@@ -48,13 +48,13 @@ type: hint, quit
 nop
 ```
 
-
+<br>
 
 그러나 많은 필터링 리스트에 eval() 함수가 빠져있다.
 
 eval() 함수 + 인코딩으로 필터링 우회가 가능할 것 같다.
 
-
+<br>
 
 ### Exploit
 
@@ -81,7 +81,7 @@ node:x:1000:1000:Linux User,,,:/home/node:/bin/sh
 jail:x:1001:1001:Linux User,,,:/home/jail:
 ```
 
-
+<br>
 
 눈에 익은 계정이 하나 보인다. 
 
